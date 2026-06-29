@@ -3,51 +3,14 @@ import ExifReader from 'exifreader';
 import { UploadCloud, ShieldCheck, AlertTriangle, ScanLine, Image as ImageIcon, Info, Cpu, FileSearch } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-export function DetectorAI() {
+export function DetectorAI({ onOpenInfo }) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [showInfoModal, setShowInfoModal] = useState(false);
-  const [hasReadToBottom, setHasReadToBottom] = useState(false);
   
   const fileInputRef = useRef(null);
   const dragCounter = useRef(0);
-  const scrollRef = useRef(null);
-
-  // Tampilkan modal info otomatis pada kunjungan pertama kali
-  useEffect(() => {
-    const hasVisited = localStorage.getItem("sifakta_detector_visited");
-    if (!hasVisited) {
-      setShowInfoModal(true);
-      localStorage.setItem("sifakta_detector_visited", "true");
-    }
-  }, []);
-
-  const handleScroll = () => {
-    const element = scrollRef.current;
-    if (element) {
-      const isBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 5;
-      if (isBottom) {
-        setHasReadToBottom(true);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (showInfoModal) {
-      setTimeout(() => {
-        const element = scrollRef.current;
-        if (element) {
-          if (element.scrollHeight <= element.clientHeight) {
-            setHasReadToBottom(true);
-          } else {
-            setHasReadToBottom(false);
-          }
-        }
-      }, 100);
-    }
-  }, [showInfoModal]);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -200,125 +163,17 @@ export function DetectorAI() {
   return (
     <div className="flex-1 flex flex-col h-full bg-[#FFFDF6] min-w-0 overflow-y-auto sidebar-scroll relative">
       
-      {/* ── Info Modal (Disclosure) ── */}
-      <AnimatePresence>
-        {showInfoModal && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#17221E]/40 backdrop-blur-md px-4"
-            onClick={() => setShowInfoModal(false)}
-          >
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              transition={{ type: "spring", duration: 0.5 }}
-              className="bg-[#FFFDF6] border border-[#21302A]/10 shadow-[0_20px_50px_rgba(33,48,42,0.15)] rounded-3xl p-6 md:p-8 max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="flex items-center gap-4 mb-6 border-b border-[#21302A]/10 pb-4">
-                <div className="p-3 bg-[#E5EBE8] text-[#21302A] rounded-2xl shadow-sm">
-                  <ScanLine className="w-7 h-7" />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-2xl text-[#21302A]">Panduan Deteksi Truth Scan</h3>
-                  <p className="text-xs text-[#5C6E60]">Sistem Verifikasi Citra Hybrid & AI Forensik</p>
-                </div>
-              </div>
-
-              {/* Scrollable Content */}
-              <div 
-                ref={scrollRef}
-                onScroll={handleScroll}
-                className="text-[#5C6E60] text-[14px] leading-relaxed space-y-5 overflow-y-auto sidebar-scroll pr-2 flex-1"
-              >
-                <p>
-                  <strong>Truth Scan</strong> adalah fitur pintar untuk mengidentifikasi apakah suatu gambar dihasilkan oleh kecerdasan buatan (AI) atau merupakan foto jepretan kamera asli.
-                </p>
-
-                {/* Grid Metrik */}
-                <div className="space-y-3">
-                  <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
-                    <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
-                      <Cpu className="w-4.5 h-4.5 text-indigo-600" /> Detektor AI Google SigLIP
-                    </h4>
-                    <p className="text-xs text-[#5C6E60] leading-normal">
-                      Menggunakan arsitektur jaringan saraf visual tingkat lanjut (SigLIP) yang dilatih pada 120.000 citra untuk mengenali tanda tangan piksel tersembunyi yang ditinggalkan oleh generator AI seperti Midjourney, DALL-E, atau Stable Diffusion.
-                    </p>
-                  </div>
-
-                  <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
-                    <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
-                      <ScanLine className="w-4.5 h-4.5 text-emerald-600" /> Error Level Analysis (ELA)
-                    </h4>
-                    <p className="text-xs text-[#5C6E60] leading-normal">
-                      Menghitung ulang tingkat kompresi piksel secara lokal. ELA menyoroti perbedaan tingkat error piksel, mempermudah Anda mendeteksi bagian gambar yang telah dimanipulasi atau disunting.
-                    </p>
-                  </div>
-
-                  <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
-                    <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
-                      <FileSearch className="w-4.5 h-4.5 text-amber-600" /> Validasi Metadata EXIF & C2PA
-                    </h4>
-                    <p className="text-xs text-[#5C6E60] leading-normal">
-                      Mengekstrak berkas metadata kriptografis untuk mendeteksi manifes C2PA (Kredensial Konten) resmi atau riwayat asal-usul berkas.
-                    </p>
-                  </div>
-                </div>
-
-                {/* PEMBERITAHUAN PENTING (Screenshot Warning) */}
-                <div className="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl flex gap-3 text-amber-950 shadow-inner">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <h4 className="font-bold text-[13px] text-amber-850 mb-1">Pemberitahuan Penting: Tangkapan Layar (Screenshot)</h4>
-                    <p className="text-[11px] leading-relaxed text-amber-900/85">
-                      Sistem ini dirancang khusus untuk membedakan <strong>foto asli dari kamera</strong> dengan <strong>foto sintetis buatan AI</strong>. 
-                      <br /><br />
-                      Gambar berupa <strong>screenshot chat, UI aplikasi, logo, atau teks murni</strong> tidak memiliki derau (noise) lensa kamera fisik. Karakteristik piksel komputer yang sangat tajam dan presisi tersebut <strong>hampir selalu diidentifikasi oleh AI sebagai Rekayasa Digital/Sintetis</strong>. Harap hanya mengunggah foto jepretan kamera untuk hasil yang akurat.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="mt-6 pt-4 border-t border-[#21302A]/10">
-                <button 
-                  disabled={!hasReadToBottom}
-                  onClick={() => setShowInfoModal(false)}
-                  className={`w-full py-3 rounded-2xl font-semibold transition-all duration-200 shadow-md ${
-                    hasReadToBottom 
-                      ? 'bg-[#21302A] text-[#FFFDF6] hover:bg-[#2F443C] active:scale-[0.98] cursor-pointer shadow-[#21302A]/10' 
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                  }`}
-                >
-                  {hasReadToBottom ? 'Saya Mengerti & Mulai Scan' : 'Harap Scroll Ke Bawah Untuk Menyetujui'}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Header */}
-      <div className="border-b border-[#21302A]/8 bg-[#FFFDF6] px-4 lg:px-8 py-4 flex items-center justify-between z-10 shadow-sm sticky top-0">
+      {/* Header (Desktop Only) */}
+      <div className="hidden lg:flex border-b border-[#21302A]/8 bg-[#FFFDF6] px-4 lg:px-8 py-4 flex items-center justify-between z-10 shadow-sm sticky top-0">
         <div className="flex flex-col gap-1">
           <h1 className="font-f1 text-[#21302A] text-[22px] leading-none">Truth Scan</h1>
           <p className="text-[#5C6E60] text-sm">AI Image Detector & Metadata Scanner</p>
         </div>
         <button 
-          onClick={() => setShowInfoModal(true)}
-          className="p-2 text-[#5C6E60] hover:text-[#21302A] hover:bg-[#21302A]/5 rounded-xl transition-colors hidden md:flex items-center gap-2 font-medium text-sm border border-transparent hover:border-[#21302A]/10"
+          onClick={onOpenInfo}
+          className="p-2 text-[#5C6E60] hover:text-[#21302A] hover:bg-[#21302A]/5 rounded-xl transition-colors flex items-center gap-2 font-medium text-sm border border-transparent hover:border-[#21302A]/10"
         >
           <Info className="w-5 h-5" /> Info Detektor
-        </button>
-        <button 
-          onClick={() => setShowInfoModal(true)}
-          className="p-2 text-[#5C6E60] hover:text-[#21302A] hover:bg-[#21302A]/5 rounded-xl transition-colors md:hidden"
-        >
-          <Info className="w-5 h-5" />
         </button>
       </div>
 

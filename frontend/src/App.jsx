@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Sidebar } from "./components/Sidebar";
 import { ChatArea } from "./components/ChatArea";
 import { DetectorAI } from "./components/DetectorAI";
-import { MobileMenuButton } from "./components/MobileMenuButton";
+import { MobileTopBar } from "./components/MobileTopBar";
 import { SettingsModal } from "./components/SettingsModal";
 import { chatWithBot } from "./services/api";
-import { Menu } from "lucide-react";
+import { Menu, X, Info, Brain, Zap, Globe, Cpu, ScanLine, FileSearch, AlertTriangle } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import "./styles/index.css";
 
 
@@ -15,6 +16,43 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); // Settings modal state
   const [currentView, setCurrentView] = useState('chat'); // 'chat' or 'detector'
   const [isLoading, setIsLoading] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [hasReadToBottom, setHasReadToBottom] = useState(false);
+  const scrollRef = useRef(null);
+
+  // Tampilkan modal info otomatis pada kunjungan pertama kali
+  useEffect(() => {
+    const hasVisited = localStorage.getItem("sifakta_chat_visited");
+    if (!hasVisited) {
+      setShowInfoModal(true);
+      localStorage.setItem("sifakta_chat_visited", "true");
+    }
+  }, []);
+
+  const handleScroll = () => {
+    const element = scrollRef.current;
+    if (element) {
+      const isBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 5;
+      if (isBottom) {
+        setHasReadToBottom(true);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (showInfoModal) {
+      setTimeout(() => {
+        const element = scrollRef.current;
+        if (element) {
+          if (element.scrollHeight <= element.clientHeight) {
+            setHasReadToBottom(true);
+          } else {
+            setHasReadToBottom(false);
+          }
+        }
+      }, 100);
+    }
+  }, [showInfoModal]);
   const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash');
   const abortControllerRef = useRef(null);
   
@@ -484,6 +522,7 @@ export default function App() {
         <Sidebar
           isOpen={isSidebarOpen}
           onToggleSidebar={setIsSidebarOpen}
+          onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
           onOpenSettings={() => setIsSettingsOpen(true)}
           sessions={sessions}
           currentSessionId={currentSessionId}
@@ -502,6 +541,7 @@ export default function App() {
         <ChatArea 
           isSidebarOpen={isSidebarOpen}
           onToggleSidebar={setIsSidebarOpen}
+          onOpenInfo={() => setShowInfoModal(true)}
           messages={messages} 
           onSendMessage={handleSendMessage}
           onEditSendMessage={handleEditSendMessage}
@@ -513,24 +553,223 @@ export default function App() {
         />
       ) : (
         <div className="flex-1 flex flex-col h-full bg-[#FFFDF6]">
-          {/* Top Header wrapper for DetectorAI */}
-          <div className="h-16 px-4 pl-14 lg:pl-6 md:px-8 border-b border-[#21302A]/8 flex items-center bg-white z-20">
-            <h1 className="text-md font-bold text-[#21302A]">AI Image Detector</h1>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <DetectorAI />
+          <div className="flex-1 overflow-y-auto pt-20 lg:pt-0">
+            <DetectorAI onOpenInfo={() => setShowInfoModal(true)} />
           </div>
         </div>
       )}
-      <MobileMenuButton 
-        isOpen={isMobileMenuOpen}
-        onToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      />
+      {!isMobileMenuOpen && (
+        <MobileTopBar 
+          isOpen={isMobileMenuOpen}
+          onToggleMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          currentView={currentView}
+          onOpenInfo={() => setShowInfoModal(true)}
+        />
+      )}
       <SettingsModal 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
         onClearHistory={handleClearAllHistory}
       />
+
+      {/* ── Info Modal (Disclosure) optimized for mobile GPU & blurs ── */}
+      <AnimatePresence>
+        {showInfoModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#17221E]/75 lg:bg-[#17221E]/40 lg:backdrop-blur-md px-4 transform-gpu"
+            onClick={() => setShowInfoModal(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-[#FFFDF6] border border-[#21302A]/10 shadow-[0_20px_50px_rgba(33,48,42,0.15)] rounded-3xl p-6 md:p-8 max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh] transform-gpu"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {currentView === 'chat' ? (
+                <>
+                  {/* Header */}
+                  <div className="flex items-center gap-4 mb-6 border-b border-[#21302A]/10 pb-4">
+                    <div className="p-3 bg-[#E5EBE8] text-[#21302A] rounded-2xl shadow-sm">
+                      <Brain className="w-7 h-7 text-indigo-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-2xl text-[#21302A]">Panduan Factize Chat</h3>
+                      <p className="text-xs text-[#5C6E60]">Asisten Verifikasi Informasi & Anti-Hoaks</p>
+                    </div>
+                  </div>
+
+                  {/* Scrollable Content */}
+                  <div 
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    className="text-[#5C6E60] text-[14px] leading-relaxed space-y-5 overflow-y-auto sidebar-scroll pr-2 flex-1 scrollbar-thin"
+                  >
+                    <p>
+                      <strong>Factize Chat</strong> dirancang khusus sebagai ruang verifikasi klaim dan pencarian fakta. Asisten ini bekerja secara taktis dan analitis untuk membongkar hoaks di internet.
+                    </p>
+
+                    {/* Grid Fitur & Model */}
+                    <div className="space-y-3">
+                      <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
+                        <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                          <Zap className="w-4.5 h-4.5 text-amber-500" fill="currentColor"/> Gemini Flash Mode
+                        </h4>
+                        <p className="text-xs text-[#5C6E60] leading-normal">
+                          Menggunakan model **Gemini 2.5 Flash**. Mode ini sangat cepat dan ideal untuk menganalisis teks singkat, mengekstrak data dari dokumen/gambar (OCR), serta melakukan verifikasi berita viral sehari-hari secara kilat.
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
+                        <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                          <Brain className="w-4.5 h-4.5 text-indigo-500"/> Gemini Deep Fact-Check
+                        </h4>
+                        <p className="text-xs text-[#5C6E60] leading-normal">
+                          Menggunakan model **Gemini 2.5 Pro**. Mode ini melakukan peninjauan mendalam dengan penalaran logika tinggi. Sangat direkomendasikan untuk klaim konspirasi yang rumit, pencarian jurnal ilmiah, atau dokumen PDF tebal.
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
+                        <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                          <Globe className="w-4.5 h-4.5 text-blue-500"/> Pencarian Web Real-time
+                        </h4>
+                        <p className="text-xs text-[#5C6E60] leading-normal">
+                          Dilengkapi dengan pencarian web terintegrasi secara dinamis. Sistem Factize otomatis menyuntikkan parameter waktu terkini pada pencarian internet untuk memastikan data yang dianalisis adalah data terbaru (Juni 2026).
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
+                        <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                          <Cpu className="w-4.5 h-4.5 text-emerald-600"/> Penanganan Typo Finansial & Politik
+                        </h4>
+                        <p className="text-xs text-[#5C6E60] leading-normal">
+                          Sistem kami secara otomatis mendeteksi kesalahan ketik umum di Indonesia (seperti *mcii*, *ihsg*, *prabowo ke francis*) untuk dicocokkan dengan kueri pencarian resmi yang benar sebelum dianalisis oleh AI.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* INFO PENTING: Konteks Percakapan (Memory) */}
+                    <div className="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl flex gap-3 text-amber-950 shadow-inner">
+                      <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <h4 className="font-bold text-[13px] text-amber-850 mb-1">Manajemen Memori Percakapan</h4>
+                        <p className="text-[11px] leading-relaxed text-amber-900/85">
+                          Asisten ini mengingat seluruh riwayat pesan Anda dalam sesi yang sama. Jika Anda mengajukan pertanyaan lanjutan seperti:
+                          <br />
+                          <em>"Ringkaskan lebih padat"</em>, <em>"Jelaskan poin ke-2"</em>, atau <em>"Apa sumbernya?"</em>,
+                          <br /><br />
+                          AI akan meninjau analisis sebelumnya dan memberikan kelanjutan yang relevan tanpa mengulang dari awal.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="mt-6 pt-4 border-t border-[#21302A]/10">
+                    <button 
+                      disabled={!hasReadToBottom}
+                      onClick={() => setShowInfoModal(false)}
+                      className={`w-full py-3 rounded-2xl font-semibold transition-all duration-200 shadow-md ${
+                        hasReadToBottom 
+                          ? 'bg-[#21302A] text-[#FFFDF6] hover:bg-[#2F443C] active:scale-[0.98] cursor-pointer shadow-[#21302A]/10' 
+                          : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                      }`}
+                    >
+                      {hasReadToBottom ? 'Saya Mengerti & Mulai Chat' : 'Harap Scroll Ke Bawah Untuk Menyetujui'}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Header */}
+                  <div className="flex items-center gap-4 mb-6 border-b border-[#21302A]/10 pb-4">
+                    <div className="p-3 bg-[#E5EBE8] text-[#21302A] rounded-2xl shadow-sm">
+                      <ScanLine className="w-7 h-7 text-[#21302A]" />
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-2xl text-[#21302A]">Panduan Deteksi Truth Scan</h3>
+                      <p className="text-xs text-[#5C6E60]">Sistem Verifikasi Citra Hybrid & AI Forensik</p>
+                    </div>
+                  </div>
+
+                  {/* Scrollable Content */}
+                  <div 
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    className="text-[#5C6E60] text-[14px] leading-relaxed space-y-5 overflow-y-auto sidebar-scroll pr-2 flex-1 scrollbar-thin"
+                  >
+                    <p>
+                      <strong>Truth Scan</strong> adalah fitur pintar untuk mengidentifikasi apakah suatu gambar dihasilkan oleh kecerdasan buatan (AI) atau merupakan foto jepretan kamera asli.
+                    </p>
+
+                    {/* Grid Metrik */}
+                    <div className="space-y-3">
+                      <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
+                        <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                          <Cpu className="w-4.5 h-4.5 text-indigo-650" /> Detektor AI Google SigLIP
+                        </h4>
+                        <p className="text-xs text-[#5C6E60] leading-normal">
+                          Menggunakan arsitektur jaringan saraf visual tingkat lanjut (SigLIP) yang dilatih pada 120.000 citra untuk mengenali tanda tangan piksel tersembunyi yang ditinggalkan oleh generator AI seperti Midjourney, DALL-E, atau Stable Diffusion.
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
+                        <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                          <ScanLine className="w-4.5 h-4.5 text-emerald-600" /> Error Level Analysis (ELA)
+                        </h4>
+                        <p className="text-xs text-[#5C6E60] leading-normal">
+                          Menghitung ulang tingkat kompresi piksel secara lokal. ELA menyoroti perbedaan tingkat error piksel, mempermudah Anda mendeteksi bagian gambar yang telah dimanipulasi atau disunting.
+                        </p>
+                      </div>
+
+                      <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
+                        <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                          <FileSearch className="w-4.5 h-4.5 text-amber-600" /> Validasi Metadata EXIF & C2PA
+                        </h4>
+                        <p className="text-xs text-[#5C6E60] leading-normal">
+                          Mengekstrak berkas metadata kriptografis untuk mendeteksi manifes C2PA (Kredensial Konten) resmi atau riwayat asal-usul berkas.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* PEMBERITAHUAN PENTING */}
+                    <div className="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl flex gap-3 text-amber-950 shadow-inner">
+                      <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <h4 className="font-bold text-[13px] text-amber-850 mb-1">Pemberitahuan Penting: Tangkapan Layar (Screenshot)</h4>
+                        <p className="text-[11px] leading-relaxed text-amber-900/85">
+                          Sistem ini dirancang khusus untuk membedakan <strong>foto asli dari kamera</strong> dengan <strong>foto sintetis buatan AI</strong>. 
+                          <br /><br />
+                          Gambar berupa <strong>screenshot chat, UI aplikasi, logo, atau teks murni</strong> tidak memiliki derau (noise) lensa kamera fisik. Karakteristik piksel komputer yang sangat tajam dan presisi tersebut <strong>hampir selalu diidentifikasi oleh AI sebagai Rekayasa Digital/Sintetis</strong>. Harap hanya mengunggah foto jepretan kamera untuk hasil yang akurat.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="mt-6 pt-4 border-t border-[#21302A]/10">
+                    <button 
+                      disabled={!hasReadToBottom}
+                      onClick={() => setShowInfoModal(false)}
+                      className={`w-full py-3 rounded-2xl font-semibold transition-all duration-200 shadow-md ${
+                        hasReadToBottom 
+                          ? 'bg-[#21302A] text-[#FFFDF6] hover:bg-[#2F443C] active:scale-[0.98] cursor-pointer shadow-[#21302A]/10' 
+                          : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                      }`}
+                    >
+                      {hasReadToBottom ? 'Saya Mengerti & Mulai Scan' : 'Harap Scroll Ke Bawah Untuk Menyetujui'}
+                    </button>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

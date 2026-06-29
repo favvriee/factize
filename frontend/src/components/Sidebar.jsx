@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Plus, MessageSquare, Trash2, ShieldCheck, Search, ScanLine, MessageCircle, Menu, PanelLeftClose, PanelLeftOpen, Settings } from "lucide-react";
+import { Plus, MessageSquare, Trash2, ShieldCheck, Search, ScanLine, MessageCircle, Menu, PanelLeftClose, PanelLeftOpen, Settings, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export function Sidebar({ 
   isOpen, 
   onToggleSidebar, 
+  onCloseMobileMenu,
   onOpenSettings,
   sessions, 
   currentSessionId, 
@@ -211,7 +212,7 @@ export function Sidebar({
         {/* Brand lockup */}
         <div className="px-5 pt-5 pb-4">
           <div className="flex items-center justify-between mb-6 px-1">
-            <div className="flex items-center gap-2 pl-12 lg:pl-0">
+            <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm overflow-hidden flex-shrink-0">
                 <img src="/logo1.png" alt="Factize Logo" className="w-full h-full object-cover" />
               </div>
@@ -227,6 +228,15 @@ export function Sidebar({
               title="Tutup sidebar"
             >
               <PanelLeftClose className="w-5 h-5" />
+            </button>
+
+            {/* Close Mobile Menu (Mobile only) */}
+            <button 
+              onClick={onCloseMobileMenu}
+              className="flex lg:hidden items-center justify-center w-8 h-8 rounded-full text-[#5C6E60] hover:bg-[#21302A]/5 hover:text-[#21302A] transition-colors cursor-pointer select-none active:scale-95"
+              title="Tutup menu"
+            >
+              <X className="w-5 h-5" />
             </button>
           </div>
 

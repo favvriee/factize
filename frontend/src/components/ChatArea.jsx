@@ -117,7 +117,7 @@ const ALTERNATIVE_PHRASES = [
   "Saring hoaks secara instan & akurat."
 ];
 
-export function ChatArea({ isSidebarOpen, onToggleSidebar, messages, onSendMessage, onEditSendMessage, isLoading, onStopGeneration, onRegenerate, selectedModel, onModelChange }) {
+export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages, onSendMessage, onEditSendMessage, isLoading, onStopGeneration, onRegenerate, selectedModel, onModelChange }) {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [inputText, setInputText] = useState("");
   const [attachments, setAttachments] = useState([]);
@@ -128,45 +128,8 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, messages, onSendMessa
   const inputRef = useRef(null);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [showInfoModal, setShowInfoModal] = useState(false);
-  const [hasReadToBottom, setHasReadToBottom] = useState(false);
   const [feedbackState, setFeedbackState] = useState({});
   const dragCounter = useRef(0);
-  const scrollRef = useRef(null);
-
-  // Tampilkan modal info otomatis pada kunjungan pertama kali ke Chat
-  useEffect(() => {
-    const hasVisited = localStorage.getItem("sifakta_chat_visited");
-    if (!hasVisited) {
-      setShowInfoModal(true);
-      localStorage.setItem("sifakta_chat_visited", "true");
-    }
-  }, []);
-
-  const handleScroll = () => {
-    const element = scrollRef.current;
-    if (element) {
-      const isBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 5;
-      if (isBottom) {
-        setHasReadToBottom(true);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (showInfoModal) {
-      setTimeout(() => {
-        const element = scrollRef.current;
-        if (element) {
-          if (element.scrollHeight <= element.clientHeight) {
-            setHasReadToBottom(true);
-          } else {
-            setHasReadToBottom(false);
-          }
-        }
-      }, 100);
-    }
-  }, [showInfoModal]);
 
   const realMessages = messages ? messages.filter(m => m.id !== 'welcome' && m.id !== 'welcome-new') : [];
   const hasConversation = realMessages.length > 0;
@@ -304,136 +267,11 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, messages, onSendMessa
         )}
       </AnimatePresence>
 
-      {/* ── Info Modal (Disclosure) ── */}
-      <AnimatePresence>
-        {showInfoModal && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#17221E]/40 backdrop-blur-md px-4"
-            onClick={() => setShowInfoModal(false)}
-          >
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              transition={{ type: "spring", duration: 0.5 }}
-              className="bg-[#FFFDF6] border border-[#21302A]/10 shadow-[0_20px_50px_rgba(33,48,42,0.15)] rounded-3xl p-6 md:p-8 max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="flex items-center gap-4 mb-6 border-b border-[#21302A]/10 pb-4">
-                <div className="p-3 bg-[#E5EBE8] text-[#21302A] rounded-2xl shadow-sm">
-                  <Brain className="w-7 h-7 text-indigo-600" />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-2xl text-[#21302A]">Panduan Factize Chat</h3>
-                  <p className="text-xs text-[#5C6E60]">Asisten Verifikasi Informasi & Anti-Hoaks</p>
-                </div>
-              </div>
-
-              {/* Scrollable Content */}
-              <div 
-                ref={scrollRef}
-                onScroll={handleScroll}
-                className="text-[#5C6E60] text-[14px] leading-relaxed space-y-5 overflow-y-auto sidebar-scroll pr-2 flex-1"
-              >
-                <p>
-                  <strong>Factize Chat</strong> dirancang khusus sebagai ruang verifikasi klaim dan pencarian fakta. Asisten ini bekerja secara taktis dan analitis untuk membongkar hoaks di internet.
-                </p>
-
-                {/* Grid Fitur & Model */}
-                <div className="space-y-3">
-                  <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
-                    <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
-                      <Zap className="w-4.5 h-4.5 text-amber-500" fill="currentColor"/> Gemini Flash Mode
-                    </h4>
-                    <p className="text-xs text-[#5C6E60] leading-normal">
-                      Menggunakan model **Gemini 2.5 Flash**. Mode ini sangat cepat dan ideal untuk menganalisis teks singkat, mengekstrak data dari dokumen/gambar (OCR), serta melakukan verifikasi berita viral sehari-hari secara kilat.
-                    </p>
-                  </div>
-
-                  <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
-                    <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
-                      <Brain className="w-4.5 h-4.5 text-indigo-500"/> Gemini Deep Fact-Check
-                    </h4>
-                    <p className="text-xs text-[#5C6E60] leading-normal">
-                      Menggunakan model **Gemini 2.5 Pro**. Mode ini melakukan peninjauan mendalam dengan penalaran logika tinggi. Sangat direkomendasikan untuk klaim konspirasi yang rumit, pencarian jurnal ilmiah, atau dokumen PDF tebal.
-                    </p>
-                  </div>
-
-                  <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
-                    <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
-                      <Globe className="w-4.5 h-4.5 text-blue-500"/> Pencarian Web Real-time
-                    </h4>
-                    <p className="text-xs text-[#5C6E60] leading-normal">
-                      Dilengkapi dengan pencarian web terintegrasi secara dinamis. Sistem Factize otomatis menyuntikkan parameter waktu terkini pada pencarian internet untuk memastikan data yang dianalisis adalah data terbaru (Juni 2026).
-                    </p>
-                  </div>
-
-                  <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 hover:border-[#21302A]/10 transition-all shadow-sm">
-                    <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
-                      <Cpu className="w-4.5 h-4.5 text-emerald-600"/> Penanganan Typo Finansial & Politik
-                    </h4>
-                    <p className="text-xs text-[#5C6E60] leading-normal">
-                      Sistem kami secara otomatis mendeteksi kesalahan ketik umum di Indonesia (seperti *mcii*, *ihsg*, *prabowo ke francis*) untuk dicocokkan dengan kueri pencarian resmi yang benar sebelum dianalisis oleh AI.
-                    </p>
-                  </div>
-                </div>
-
-                {/* INFO PENTING: Konteks Percakapan (Memory) */}
-                <div className="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl flex gap-3 text-amber-950 shadow-inner">
-                  <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <h4 className="font-bold text-[13px] text-amber-850 mb-1">Manajemen Memori Percakapan</h4>
-                    <p className="text-[11px] leading-relaxed text-amber-900/85">
-                      Asisten ini mengingat seluruh riwayat pesan Anda dalam sesi yang sama. Jika Anda mengajukan pertanyaan lanjutan seperti:
-                      <br />
-                      <em>"Ringkaskan lebih padat"</em>, <em>"Jelaskan poin ke-2"</em>, atau <em>"Apa sumbernya?"</em>,
-                      <br /><br />
-                      AI akan meninjau analisis sebelumnya dan memberikan kelanjutan yang relevan tanpa mengulang dari awal.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="mt-6 pt-4 border-t border-[#21302A]/10">
-                <button 
-                  disabled={!hasReadToBottom}
-                  onClick={() => setShowInfoModal(false)}
-                  className={`w-full py-3 rounded-2xl font-semibold transition-all duration-200 shadow-md ${
-                    hasReadToBottom 
-                      ? 'bg-[#21302A] text-[#FFFDF6] hover:bg-[#2F443C] active:scale-[0.98] cursor-pointer shadow-[#21302A]/10' 
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                  }`}
-                >
-                  {hasReadToBottom ? 'Saya Mengerti & Mulai Chat' : 'Harap Scroll Ke Bawah Untuk Menyetujui'}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Header ── */}
-      <div className="border-b border-[#21302A]/8 bg-[#FFFDF6] px-4 py-3 pl-14 lg:pl-6 flex items-center gap-3 z-10 shadow-sm relative h-[60px]">
+      {/* ── Header (Desktop Only) ── */}
+      <div className="hidden lg:flex border-b border-[#21302A]/8 bg-[#FFFDF6] px-4 py-3 lg:pl-6 flex items-center gap-3 z-10 shadow-sm relative h-[60px]">
         
-        {/* Mobile Header Title */}
-        <div className="flex-1 lg:hidden text-center pr-2">
-          <h1 className="font-f1 text-[#21302A] text-[22px] leading-none">
-            Factize
-          </h1>
-        </div>
-        <div className="lg:hidden flex items-center">
-          <button onClick={() => setShowInfoModal(true)} className="p-1.5 text-[#21302A]/60 hover:text-[#21302A] hover:bg-[#21302A]/5 rounded-md transition-colors">
-            <Info className="w-5 h-5" />
-          </button>
-        </div>
-
         {/* Desktop Header Left (Model Selector) */}
-        <div className="hidden lg:block relative">
+        <div className="relative">
           <button 
             onClick={() => setShowModelDropdown(!showModelDropdown)}
             className="flex items-center gap-1.5 bg-transparent rounded-md px-2 py-1.5 text-sm font-semibold text-[#21302A] hover:bg-[#21302A]/5 transition-colors"
@@ -461,9 +299,9 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, messages, onSendMessa
         </div>
 
         {/* Desktop Header Right (Info Modal) */}
-        <div className="hidden lg:flex flex-1 justify-end items-center gap-2">
+        <div className="flex flex-1 justify-end items-center gap-2">
           <button 
-            onClick={() => setShowInfoModal(true)}
+            onClick={onOpenInfo}
             className="flex items-center gap-1.5 text-[#5C6E60] hover:text-[#21302A] hover:bg-[#21302A]/5 px-2.5 py-1.5 rounded-md transition-colors text-sm font-medium"
           >
             <Info className="w-4 h-4" /> Info
@@ -475,7 +313,7 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, messages, onSendMessa
 
       {/* ── Messages ── */}
       {hasConversation && (
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-8 sidebar-scroll scroll-smooth z-10" onClick={() => setShowModelDropdown(false)}>
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-20 pb-8 lg:py-8 sidebar-scroll scroll-smooth z-10" onClick={() => setShowModelDropdown(false)}>
         <div className="max-w-3xl mx-auto flex flex-col gap-8 pb-4">
           {realMessages.map((message, index) => {
             const isUser = message.sender === "user";
@@ -875,7 +713,7 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, messages, onSendMessa
 
       {/* ── Landing Page Content ── */}
       {!hasConversation && (
-        <div className="flex-1 flex flex-col justify-center relative w-full h-full pt-10 pb-20">
+        <div className="flex-1 flex flex-col justify-center relative w-full h-full pt-24 pb-20 lg:pt-10">
           {/* Background Watermark Logo */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.25] z-0 overflow-hidden">
             <img src="/logo2.png" alt="Factize Watermark" className="w-[400px] h-[400px] md:w-[700px] md:h-[700px] object-contain drop-shadow-sm" />
