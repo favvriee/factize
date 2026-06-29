@@ -1,3 +1,4 @@
+/* global __APP_VERSION__ */
 import React, { useState, useEffect } from "react";
 import { X, ShieldAlert, Key, Trash2, Eye, EyeOff, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { verifyGeminiKey, verifyHfToken } from "../services/api";
@@ -108,6 +109,15 @@ export function SettingsModal({ isOpen, onClose, onClearHistory, language, onLan
                 : "border-transparent text-[#5C6E60] hover:bg-[#21302A]/3"}`}
           >
             {t.tabKeys}
+          </button>
+          <button 
+            onClick={() => setActiveTab("tentang")}
+            className={`flex-1 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer
+              ${activeTab === "tentang" 
+                ? "border-[#21302A] text-[#21302A] bg-[#FFFDF6]" 
+                : "border-transparent text-[#5C6E60] hover:bg-[#21302A]/3"}`}
+          >
+            {t.tabAbout}
           </button>
         </div>
 
@@ -323,6 +333,76 @@ export function SettingsModal({ isOpen, onClose, onClearHistory, language, onLan
                     <span>{hfError}</span>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "tentang" && (
+            <div className="space-y-6 animate-fadeIn">
+              {/* App Identity */}
+              <div className="flex flex-col items-center justify-center text-center border-b border-[#21302A]/8 pb-6">
+                <div className="relative mb-3 flex-shrink-0">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-md overflow-hidden bg-white border border-[#21302A]/8 relative">
+                    <img src="/logo1.png" alt="Factize" className="w-12 h-12 object-cover" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-[#FFFDF6] rounded-full shadow-sm animate-pulse" />
+                </div>
+                <h4 className="font-serif font-extrabold text-xl text-[#21302A] tracking-tight leading-none mb-1">
+                  Factize AI
+                </h4>
+                <div className="inline-flex items-center gap-1.5 bg-[#E5EBE8] border border-[#21302A]/8 text-[11px] font-bold text-[#21302A] px-2.5 py-1 rounded-full select-all font-mono">
+                  v{typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "1.0.0"}
+                </div>
+              </div>
+
+              {/* About description */}
+              <div className="space-y-4">
+                <div>
+                  <h5 className="font-bold text-xs uppercase tracking-wider text-[#21302A]/40 mb-1.5">{t.aboutHeading}</h5>
+                  <p className="text-xs text-[#5C6E60] leading-relaxed font-medium">
+                    {t.aboutDesc}
+                  </p>
+                </div>
+
+                {/* Key Features */}
+                <div>
+                  <h5 className="font-bold text-xs uppercase tracking-wider text-[#21302A]/40 mb-2">{t.featuresHeading}</h5>
+                  <div className="space-y-2.5">
+                    <div className="bg-white p-3 rounded-xl border border-[#21302A]/5 shadow-2xs">
+                      <h6 className="font-bold text-xs text-[#21302A] mb-0.5">{t.feature1Title}</h6>
+                      <p className="text-[11px] text-[#5C6E60] leading-relaxed">{t.feature1Desc}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-[#21302A]/5 shadow-2xs">
+                      <h6 className="font-bold text-xs text-[#21302A] mb-0.5">{t.feature2Title}</h6>
+                      <p className="text-[11px] text-[#5C6E60] leading-relaxed">{t.feature2Desc}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-[#21302A]/5 shadow-2xs">
+                      <h6 className="font-bold text-xs text-[#21302A] mb-0.5">{t.feature3Title}</h6>
+                      <p className="text-[11px] text-[#5C6E60] leading-relaxed">{t.feature3Desc}</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-[#21302A]/5 shadow-2xs">
+                      <h6 className="font-bold text-xs text-[#21302A] mb-0.5">{t.feature4Title}</h6>
+                      <p className="text-[11px] text-[#5C6E60] leading-relaxed">{t.feature4Desc}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tech Stack */}
+                <div>
+                  <h5 className="font-bold text-xs uppercase tracking-wider text-[#21302A]/40 mb-2">{t.stackHeading}</h5>
+                  <ul className="text-xs text-[#5C6E60] space-y-1.5 bg-[#F4F7F6] p-3 rounded-xl border border-[#21302A]/8 font-medium">
+                    <li className="flex items-center gap-1.5">⚡ {t.stackFrontend}</li>
+                    <li className="flex items-center gap-1.5">⚙️ {t.stackBackend}</li>
+                    <li className="flex items-center gap-1.5">🤖 {t.stackEngine}</li>
+                    <li className="flex items-center gap-1.5">🔍 {t.stackForensics}</li>
+                  </ul>
+                </div>
+
+                {/* Developer */}
+                <div className="pt-2 border-t border-[#21302A]/8 text-center">
+                  <h5 className="font-bold text-xs uppercase tracking-wider text-[#21302A]/40 mb-1">{t.devHeading}</h5>
+                  <p className="text-[10px] text-[#5C6E60] font-semibold">{t.copyright}</p>
+                </div>
               </div>
             </div>
           )}
