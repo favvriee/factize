@@ -119,19 +119,19 @@ const jellyInputVariants = {
     transition: {
       type: "spring",
       stiffness: 280,
-      damping: 15,
+      damping: 22,
       mass: 0.6
     }
   },
   hidden: {
-    y: 90,
+    y: 100,
     opacity: 0,
-    scaleY: 0.6,   // Peregangan vertikal (jelly) ke arah bawah
-    scaleX: 0.94,  // Penyusutan lebar horizontal
+    scaleY: (typeof window !== "undefined" && window.innerWidth < 768) ? 1 : 0.6,
+    scaleX: (typeof window !== "undefined" && window.innerWidth < 768) ? 1 : 0.94,
     transition: {
       type: "spring",
-      stiffness: 350,
-      damping: 20,
+      stiffness: 320,
+      damping: 24,
       mass: 0.5
     }
   }
@@ -348,8 +348,8 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages,
 
       {/* ── Messages ── */}
       {hasConversation && (
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-20 pb-8 lg:py-8 sidebar-scroll scroll-smooth z-10" onClick={() => setShowModelDropdown(false)}>
-        <div className="max-w-3xl mx-auto flex flex-col gap-8 pb-4">
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-[70px] pb-4 lg:py-8 sidebar-scroll scroll-smooth z-10" onClick={() => setShowModelDropdown(false)}>
+        <div className="max-w-3xl mx-auto flex flex-col gap-5 md:gap-8 pb-4">
           {realMessages.map((message, index) => {
             const isUser = message.sender === "user";
             const isLastMessage = index === realMessages.length - 1;
@@ -532,7 +532,7 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages,
                                         <motion.div 
                                           whileHover={{ scale: 1.01, y: -1 }}
                                           transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                                          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 rounded-2xl border bg-gradient-to-r ${config.bg} font-sans my-5 shadow-sm relative overflow-hidden select-none`}
+                                          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 rounded-2xl border bg-gradient-to-r ${config.bg} font-sans my-3 md:my-5 shadow-sm relative overflow-hidden select-none`}
                                         >
                                           <div className="absolute -right-8 -top-8 w-24 h-24 rounded-full bg-current opacity-[0.03] blur-xl pointer-events-none" />
                                           <div className="flex items-center gap-3">
@@ -612,7 +612,7 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages,
                                     <motion.div 
                                       whileHover={{ scale: 1.01, y: -1 }}
                                       transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                                      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 rounded-2xl border bg-gradient-to-r ${config.bg} font-sans my-5 shadow-sm relative overflow-hidden select-none`}
+                                      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 rounded-2xl border bg-gradient-to-r ${config.bg} font-sans my-3 md:my-5 shadow-sm relative overflow-hidden select-none`}
                                     >
                                       <div className="absolute -right-8 -top-8 w-24 h-24 rounded-full bg-current opacity-[0.03] blur-xl pointer-events-none" />
                                       <div className="flex items-center gap-3">
@@ -839,7 +839,7 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages,
       </AnimatePresence>
 
       {/* ── Input Bar ── */}
-      <div className={`px-4 md:px-8 z-10 w-full ${hasConversation ? 'pb-6 bg-gradient-to-t from-[#FFFDF6] to-transparent pt-2' : 'pb-8'}`} onClick={() => setShowModelDropdown(false)}>
+      <div className={`px-4 md:px-8 z-10 w-full ${hasConversation ? 'pb-3 md:pb-6 bg-gradient-to-t from-[#FFFDF6] to-transparent pt-1.5' : 'pb-4 md:pb-8'}`} onClick={() => setShowModelDropdown(false)}>
         <div className="max-w-3xl mx-auto">
           
           <div className="flex flex-col gap-2">
@@ -895,7 +895,7 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages,
             </div>
 
             {/* Mobile Model Selector (floating above the input capsule) */}
-            <div className="lg:hidden flex justify-start gap-1.5 pl-2 mb-1 relative">
+            <div className="lg:hidden flex justify-start gap-1.5 pl-2 mb-0.5 relative">
               <button 
                 onClick={(e) => { e.stopPropagation(); setShowModelDropdown(!showModelDropdown); }}
                 className="flex items-center gap-1 bg-[#F7F4E9] border border-[#21302A]/10 rounded-full px-3 py-1.5 text-[11px] font-bold text-[#21302A] hover:bg-[#E8E4D8] transition-colors shadow-2xs cursor-pointer select-none active:scale-95"
@@ -927,8 +927,11 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages,
               variants={jellyInputVariants}
               initial="visible"
               animate={isMobileMenuOpen ? "hidden" : "visible"}
-              style={{ WebkitBackdropFilter: "blur(24px)" }}
-              className="bg-white/45 backdrop-blur-xl border border-[#21302A]/12 shadow-[0_12px_28px_rgba(33,48,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9)] transition-all duration-200 focus-within:bg-white/65 focus-within:border-[#21302A]/24 focus-within:shadow-[0_16px_40px_rgba(33,48,42,0.12)] flex md:flex-col flex-row items-center md:items-stretch rounded-full md:rounded-[24px] p-1.5 pl-3 pr-2 md:p-2.5 md:pl-2.5 md:pr-2.5 min-h-[52px] md:min-h-[140px] w-full transform-gpu"
+              style={{ 
+                WebkitBackdropFilter: (typeof window !== "undefined" && window.innerWidth < 768) ? "none" : "blur(24px)",
+                willChange: "transform, opacity" 
+              }}
+              className="bg-[#FFFDF6]/95 md:bg-white/45 backdrop-blur-none md:backdrop-blur-xl border border-[#21302A]/12 shadow-[0_12px_28px_rgba(33,48,42,0.08),_inset_0_1px_1px_rgba(255,255,255,0.9)] transition-all duration-200 focus-within:bg-[#FFFDF6] md:focus-within:bg-white/65 focus-within:border-[#21302A]/24 focus-within:shadow-[0_16px_40px_rgba(33,48,42,0.12)] flex md:flex-col flex-row items-center md:items-stretch rounded-full md:rounded-[24px] p-1.5 pl-3 pr-2 md:p-2.5 md:pl-2.5 md:pr-2.5 min-h-[52px] md:min-h-[140px] w-full transform-gpu"
             >
               
               {/* Mobile Left Actions (Plus button inside capsule) */}
@@ -1061,7 +1064,7 @@ export function ChatArea({ isSidebarOpen, onToggleSidebar, onOpenInfo, messages,
             accept="image/*,application/pdf"
             disabled={isLoading}
           />
-          <p className="text-center text-[10px] text-[#21302A]/40 mt-3 font-semibold select-none tracking-wide">
+          <p className="text-center text-[10px] text-[#21302A]/40 mt-1.5 md:mt-3 font-semibold select-none tracking-wide">
             {t.aiDisclaimer}
           </p>
         </div>
