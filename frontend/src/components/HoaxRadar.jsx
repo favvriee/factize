@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { RefreshCw, Radio, AlertTriangle, ShieldCheck, Link as LinkIcon, ArrowRight, Loader2 } from "lucide-react";
+import { RefreshCw, Radio, AlertTriangle, ShieldCheck, Link as LinkIcon, ArrowRight, Loader2, Info } from "lucide-react";
 import { motion } from "motion/react";
 import { translations } from "../services/translations";
 
-export default function HoaxRadar({ language, onVerifyHoax }) {
+export default function HoaxRadar({ language, onVerifyHoax, onOpenInfo }) {
   const t = translations[language || "id"];
   const [hoaxes, setHoaxes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -120,14 +120,25 @@ export default function HoaxRadar({ language, onVerifyHoax }) {
           </p>
         </div>
 
-        <button
-          onClick={handleRefresh}
-          disabled={isRefreshing || isLoading}
-          className="flex-shrink-0 inline-flex items-center justify-center gap-2 bg-[#2A3A34] hover:bg-[#1E2B25] disabled:bg-[#2A3A34]/50 text-white text-xs font-bold px-4 py-2.5 rounded-xl active:scale-95 transition-all disabled:pointer-events-none shadow-sm"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-          <span>{isRefreshing ? t.radarRefreshLoading : t.radarRefreshBtn}</span>
-        </button>
+        <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+          {/* Info Modal Button (Visible on desktop/PC) */}
+          <button
+            onClick={onOpenInfo}
+            className="inline-flex items-center justify-center gap-1.5 text-[#5C6E60] hover:text-[#21302A] hover:bg-[#21302A]/5 px-3 py-2 rounded-xl transition-colors text-xs font-semibold border border-[#21302A]/10 bg-transparent active:scale-95"
+          >
+            <Info className="w-3.5 h-3.5" />
+            <span>Info</span>
+          </button>
+
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing || isLoading}
+            className="inline-flex items-center justify-center gap-2 bg-[#2A3A34] hover:bg-[#1E2B25] disabled:bg-[#2A3A34]/50 text-white text-xs font-bold px-4 py-2.5 rounded-xl active:scale-95 transition-all disabled:pointer-events-none shadow-sm"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            <span>{isRefreshing ? t.radarRefreshLoading : t.radarRefreshBtn}</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Body */}

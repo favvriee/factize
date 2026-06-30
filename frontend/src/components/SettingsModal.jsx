@@ -1,6 +1,6 @@
 /* global __APP_VERSION__ */
 import React, { useState, useEffect } from "react";
-import { X, ShieldAlert, Key, Trash2, Eye, EyeOff, CheckCircle2, XCircle, Loader2, MessageSquare, Globe, Image, Smartphone, Code2, Server, Brain, Fingerprint, Award } from "lucide-react";
+import { X, ShieldAlert, Key, Trash2, Eye, EyeOff, CheckCircle2, XCircle, Loader2, MessageSquare, Globe, Image, Smartphone, Code2, Server, Brain, Fingerprint, Award, Radio } from "lucide-react";
 import { verifyGeminiKey, verifyHfToken } from "../services/api";
 import { translations } from "../services/translations";
 
@@ -413,6 +413,15 @@ export function SettingsModal({ isOpen, onClose, onClearHistory, language, onLan
                       <div>
                         <h6 className="font-bold text-xs text-[#21302A] mb-0.5">{t.feature4Title}</h6>
                         <p className="text-[11px] text-[#5C6E60] leading-relaxed">{t.feature4Desc}</p>
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-xl border border-[#21302A]/5 shadow-2xs flex gap-3 items-start">
+                      <div className="p-1.5 rounded-lg bg-[#2A3A34]/5 text-[#2A3A34] flex-shrink-0 mt-0.5">
+                        <Radio className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <h6 className="font-bold text-xs text-[#21302A] mb-0.5">{t.feature5Title}</h6>
+                        <p className="text-[11px] text-[#5C6E60] leading-relaxed">{t.feature5Desc}</p>
                       </div>
                     </div>
                   </div>

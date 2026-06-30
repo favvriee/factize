@@ -160,7 +160,21 @@ export const translations = {
     popupUpdateTitle: "Fitur Baru: Radar Hoaks Terkini! 🚨",
     popupUpdateDesc: "Kami baru saja menambahkan dashboard pemantauan isu hoaks yang sedang ramai di masyarakat minggu ini. Lindungi komunitas Anda sekarang.",
     popupUpdateAction: "Lihat Sekarang",
-    popupUpdateDismiss: "Nanti Saja"
+    popupUpdateDismiss: "Nanti Saja",
+    feature5Title: "Radar Hoaks Lokal",
+    feature5Desc: "Memantau isu viral, rumor bantuan sosial, BPJS, dan kebencanaan yang berkembang di masyarakat.",
+    radarGuideTitle: "Panduan Radar Hoaks",
+    radarGuideSub: "Cara memantau desas-desus & hoaks terpopuler di komunitas.",
+    radarGuideIntro: "Radar Hoaks Lokal menyajikan informasi isu terkini yang marak dibagikan di masyarakat secara real-time demi memelihara ketertiban komunitas:",
+    radarGuideCard1Title: "Database Cepat Lokal",
+    radarGuideCard1Desc: "Memuat data hoaks secara instan tanpa memakan kuota API Gemini untuk kecepatan akses maksimal.",
+    radarGuideCard2Title: "Sinkronisasi AI Real-Time",
+    radarGuideCard2Desc: "Penelusuran dan ekstraksi data hoaks terkini dari mesin pencari web terpercaya menggunakan model Gemini.",
+    radarGuideCard3Title: "Cek Fakta Sekali Klik",
+    radarGuideCard3Desc: "Klik tombol 'Verifikasi Sekarang' untuk mengirim kueri analisis langsung ke asisten obrolan AI.",
+    agreeRadar: "Saya Mengerti",
+    radarTipTitle: "Catatan Pembaruan",
+    radarTipDesc: "Data radar ditarik langsung dari situs pencarian web RAG resmi dan diperbarui secara berkala."
   },
   en: {
     // General / Sidebar
@@ -323,6 +337,20 @@ export const translations = {
     popupUpdateTitle: "New Feature: Hoax Radar! 🚨",
     popupUpdateDesc: "We've added a live dashboard monitoring active rumors and fake news in the community this week. Protect your local circle now.",
     popupUpdateAction: "View Now",
-    popupUpdateDismiss: "Later"
+    popupUpdateDismiss: "Later",
+    feature5Title: "Local Hoax Radar",
+    feature5Desc: "Monitor trending rumors, social assistance, healthcare BPJS, and emergency disaster claims in the community.",
+    radarGuideTitle: "Hoax Radar Guide",
+    radarGuideSub: "How to monitor trending community rumors & hoaxes.",
+    radarGuideIntro: "The Local Hoax Radar displays current trending issues circulating within the community in real-time to preserve digital awareness:",
+    radarGuideCard1Title: "Instant Local Database",
+    radarGuideCard1Desc: "Loads trending hoax reports instantly without invoking the Gemini API key for maximum loading speed.",
+    radarGuideCard2Title: "Real-Time AI Sync",
+    radarGuideCard2Desc: "Extracts and scrapes active rumors from trusted search engines dynamically powered by the Gemini model.",
+    radarGuideCard3Title: "Single-Click Verification",
+    radarGuideCard3Desc: "Click 'Verify Now' on any hoax card to immediately send a structured search prompt to the AI chat assistant.",
+    agreeRadar: "I Understand",
+    radarTipTitle: "Update Notes",
+    radarTipDesc: "Radar data is fetched directly from official web search RAG directories and refreshed regularly."
   }
 };

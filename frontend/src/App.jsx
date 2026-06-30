@@ -582,7 +582,7 @@ export default function App() {
 
         {currentView === 'radar' && (
           <div className="flex-1 flex flex-col h-full bg-[#FFFDF6] overflow-y-auto pt-20 lg:pt-0">
-            <HoaxRadar language={language} onVerifyHoax={handleVerifyHoax} />
+            <HoaxRadar language={language} onVerifyHoax={handleVerifyHoax} onOpenInfo={() => setShowInfoModal(true)} />
           </div>
         )}
       </div>
