@@ -362,8 +362,21 @@ async def analyze_chat_stream(messages, model_name='gemini-2.5-flash', custom_ap
                         mime_type = att.type
                         base64_data = att.data.split(",")[1] if "," in att.data else att.data
                         file_bytes = base64.b64decode(base64_data)
-                        file_part = types.Part.from_bytes(data=file_bytes, mime_type=mime_type)
-                        parts.append(file_part)
+                        
+                        # Gunakan OCR backend terpadu untuk menghemat token visual Gemini
+                        from .ocr_service import perform_ocr_with_fallback
+                        key_to_use = custom_api_key if custom_api_key else GEMINI_API_KEY
+                        
+                        # Beri tahu frontend status ekstraksi teks
+                        if i == len(messages) - 1 and role == "user":
+                            yield f"data: {json.dumps({'status': 'ocr', 'message': f'Membaca teks dari berkas {att.name} via OCR...' })}\n\n"
+                            
+                        extracted_text = perform_ocr_with_fallback(file_bytes, mime_type, key_to_use)
+                        
+                        if extracted_text and extracted_text.strip():
+                            content_text += f"\n\n[Sistem: Teks hasil pembacaan OCR pada berkas '{att.name}':]\n{extracted_text}"
+                        else:
+                            content_text += f"\n\n[Sistem: Berkas '{att.name}' diunggah tetapi tidak ada teks yang berhasil diekstrak secara lokal/visual.]"
                     except Exception as e:
                         print(f"Gagal mem-parsing attachment {att.name}: {e}")
 

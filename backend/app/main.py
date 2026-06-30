@@ -1,11 +1,12 @@
 import os
-from fastapi import FastAPI, UploadFile, File, HTTPException, Header
+from fastapi import FastAPI, UploadFile, File, HTTPException, Header, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from .services.ai_service import analyze_chat_stream
 from .services.ai_detector_service import analyze_hybrid_image
+from .services.ocr_service import perform_ocr_with_fallback, verify_extracted_text
 
 app = FastAPI(title="si-FAKTA API", version="1.0.0")
 
@@ -86,6 +87,38 @@ async def scan_image(file: UploadFile = File(...), x_hf_token: Optional[str] = H
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/verify-ocr")
+async def verify_ocr(
+    file: UploadFile = File(...),
+    mode: str = Form("screenshot"),  # "screenshot" atau "document"
+    x_gemini_api_key: Optional[str] = Header(None)
+):
+    allowed_types = ["image/png", "image/jpeg", "image/jpg", "application/pdf"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Format file harus berupa gambar (PNG/JPEG) atau PDF.")
+        
+    try:
+        contents = await file.read()
+        extracted_text = perform_ocr_with_fallback(contents, file.content_type, x_gemini_api_key)
+        
+        if not extracted_text.strip():
+            return {
+                "success": False,
+                "reason": "Tidak ada teks yang terdeteksi di dalam berkas ini."
+            }
+            
+        verification_result = verify_extracted_text(extracted_text, mode, x_gemini_api_key)
+        
+        return {
+            "success": True,
+            "text": extracted_text,
+            **verification_result
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.get("/api/trending")

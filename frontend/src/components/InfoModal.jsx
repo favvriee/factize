@@ -265,6 +265,13 @@ export function InfoModal({ isOpen, onClose, currentView, language }) {
                       </h4>
                       <p className="text-xs text-[#5C6E60] leading-normal">{t.exifDesc}</p>
                     </div>
+
+                    <div className="bg-white p-3.5 rounded-2xl border border-[#21302A]/5 shadow-sm">
+                      <h4 className="font-bold text-[#21302A] flex items-center gap-2 mb-1">
+                        <ScanLine className="w-4.5 h-4.5 text-blue-500" /> {t.detectorGuideOcrTitle}
+                      </h4>
+                      <p className="text-xs text-[#5C6E60] leading-normal">{t.detectorGuideOcrDesc}</p>
+                    </div>
                   </div>
 
                   <div className="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl flex gap-3 text-amber-950 shadow-inner">
