@@ -80,6 +80,17 @@ export default function App() {
     return savedId || null;
   });
 
+  const currentSessionIdRef = useRef(currentSessionId);
+  const sessionsRef = useRef(sessions);
+
+  useEffect(() => {
+    currentSessionIdRef.current = currentSessionId;
+  }, [currentSessionId]);
+
+  useEffect(() => {
+    sessionsRef.current = sessions;
+  }, [sessions]);
+
   // Sync to localStorage
   useEffect(() => {
     try {
@@ -115,8 +126,10 @@ export default function App() {
     }
 
     let processedAttachments = [];
-    let newMessages = [...messages];
-    let sessionIdToUse = currentSessionId;
+    const activeSessionId = currentSessionIdRef.current;
+    const activeSession = sessionsRef.current.find(s => s.id === activeSessionId);
+    let newMessages = activeSession ? [...activeSession.messages] : [];
+    let sessionIdToUse = activeSessionId;
     let isNewSession = false;
 
     if (isRegenerate) {
