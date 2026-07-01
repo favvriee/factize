@@ -128,7 +128,8 @@ export function DetectorAI({ onOpenInfo, language }) {
       formData.append("file", file);
       
       const hostname = window.location.hostname;
-      const apiBase = import.meta.env.VITE_API_URL || `http://${hostname}:8000`;
+      const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.startsWith("192.168.");
+      const apiBase = import.meta.env.VITE_API_URL || (isLocal ? `http://${hostname}:8000` : `/_/backend`);
       const headers = {};
       const customHfToken = localStorage.getItem("sifakta_hf_token");
       if (customHfToken) {
@@ -183,7 +184,8 @@ export function DetectorAI({ onOpenInfo, language }) {
       formData.append("mode", ocrMode);
 
       const hostname = window.location.hostname;
-      const apiBase = import.meta.env.VITE_API_URL || `http://${hostname}:8000`;
+      const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.startsWith("192.168.");
+      const apiBase = import.meta.env.VITE_API_URL || (isLocal ? `http://${hostname}:8000` : `/_/backend`);
       const headers = {};
       
       const customGeminiKey = localStorage.getItem("sifakta_gemini_key");

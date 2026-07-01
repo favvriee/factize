@@ -14,7 +14,8 @@ export default function HoaxRadar({ language, onVerifyHoax, onOpenInfo }) {
     try {
       setError(null);
       const hostname = window.location.hostname;
-      const apiBase = import.meta.env.VITE_API_URL || `http://${hostname}:8000`;
+      const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.startsWith("192.168.");
+      const apiBase = import.meta.env.VITE_API_URL || (isLocal ? `http://${hostname}:8000` : `/_/backend`);
       const response = await fetch(`${apiBase}/api/trending`);
       if (!response.ok) throw new Error("Gagal memuat data tren.");
       const data = await response.json();
@@ -32,7 +33,8 @@ export default function HoaxRadar({ language, onVerifyHoax, onOpenInfo }) {
     setError(null);
     try {
       const hostname = window.location.hostname;
-      const apiBase = import.meta.env.VITE_API_URL || `http://${hostname}:8000`;
+      const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.startsWith("192.168.");
+      const apiBase = import.meta.env.VITE_API_URL || (isLocal ? `http://${hostname}:8000` : `/_/backend`);
       const headers = { "Content-Type": "application/json" };
       const customGeminiKey = localStorage.getItem("sifakta_gemini_key");
       if (customGeminiKey) {

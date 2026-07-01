@@ -4,7 +4,8 @@ const getApiBase = () => {
     return import.meta.env.VITE_API_URL;
   }
   const hostname = window.location.hostname;
-  return `http://${hostname}:8000`;
+  const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.startsWith("192.168.");
+  return isLocal ? `http://${hostname}:8000` : `/_/backend`;
 };
 
 const API_BASE = getApiBase();

@@ -29,6 +29,18 @@ export default defineConfig({
   server: {
     host: true
   },
+  build: {
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
+  },
   define: {
     __APP_VERSION__: JSON.stringify(fullVersion),
   }
