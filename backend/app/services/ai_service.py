@@ -462,9 +462,17 @@ async def analyze_chat_stream(messages, model_name='gemini-2.5-flash', custom_ap
         )
         
         async for chunk in response_stream:
-            if chunk.text:
-                # Kirim data dalam format Server-Sent Events (SSE)
-                yield f"data: {json.dumps({'text': chunk.text})}\n\n"
+            try:
+                text_chunk = chunk.text
+                if text_chunk:
+                    # Kirim data dalam format Server-Sent Events (SSE)
+                    yield f"data: {json.dumps({'text': text_chunk})}\n\n"
+            except ValueError as ve:
+                print(f"[Gemini Stream] Gagal membaca teks dari chunk (kemungkinan diblokir filter/safety): {ve}")
+                if hasattr(chunk, 'candidates') and chunk.candidates:
+                    finish_reason = chunk.candidates[0].finish_reason
+                    if finish_reason and finish_reason.name in ["SAFETY", "BLOCKLIST", "RECITATION", "OTHER"]:
+                        yield f"data: {json.dumps({'text': f'\n\n*[Peringatan: Aliran teks dihentikan oleh sistem keamanan Gemini karena alasan {finish_reason.name}]*'})}\n\n"
                 
         # Kirim data RAG ke client di akhir stream sukses
         if raw_results:
@@ -473,7 +481,9 @@ async def analyze_chat_stream(messages, model_name='gemini-2.5-flash', custom_ap
             yield f"data: {json.dumps({'text': rag_delimiter + rag_payload})}\n\n"
             
     except Exception as e:
-        print(f"Gemini API Error: {e}")
+        import traceback
+        print(f"Gemini API Error: {type(e).__name__} - {e}")
+        traceback.print_exc()
         error_msg = str(e)
         
         # Cek jika error disebabkan oleh antrean server (503)
