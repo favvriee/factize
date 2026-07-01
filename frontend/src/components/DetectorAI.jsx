@@ -487,67 +487,87 @@ export function DetectorAI({ onOpenInfo, language }) {
 
         {/* Result Area for OCR Mode */}
         {mode === 'text' && result && !isLoading && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col gap-5 w-full"
-          >
-            {/* Verdict Card */}
-            <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row gap-5 items-start sm:items-center shadow-sm
-              ${result.isManipulated ? 'bg-red-50 border-red-200' : 'bg-[#E8F5E9]/50 border-green-200'}`}>
-              <div className={`p-4 rounded-full flex-shrink-0 ${result.isManipulated ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
-                {result.isManipulated ? <AlertTriangle className="w-8 h-8" /> : <ShieldCheck className="w-8 h-8" />}
+          result.success === false ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-6 rounded-2xl border border-orange-200 bg-orange-50/50 flex flex-col sm:flex-row gap-5 items-start sm:items-center shadow-sm w-full"
+            >
+              <div className="p-4 rounded-full flex-shrink-0 bg-orange-100 text-orange-700">
+                <AlertTriangle className="w-8 h-8" />
               </div>
-              <div className="flex-1 flex flex-col gap-1.5">
-                <h3 className={`text-xl font-bold font-serif ${result.isManipulated ? 'text-red-700' : 'text-green-800'}`}>
-                  {result.isManipulated 
-                    ? t.ocrVerdictManipulated
-                    : t.ocrVerdictGenuine}
+              <div className="flex-1 flex flex-col gap-1.5 font-sans">
+                <h3 className="text-xl font-bold text-orange-800">
+                  {language === "en" ? 'Forensics Interrupted' : 'Gagal Menganalisis Dokumen'}
                 </h3>
-                <div className="flex flex-wrap items-center gap-2 mt-1">
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-black/5 text-black/70">
-                    {language === "en" ? "Fact Match Score" : "Persentase Kecocokan"}: {result.confidence}
-                  </span>
-                  {result.sourceMatch && result.sourceMatch !== "None" && (
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">
-                      {t.ocrVerdictSource}: {result.sourceMatch}
-                    </span>
-                  )}
+                <p className="text-[15px] mt-1.5 leading-relaxed text-orange-900/80">
+                  <strong>{language === "en" ? "Reason:" : "Penyebab:"}</strong> {result.reason || result.analysis}
+                </p>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col gap-5 w-full"
+            >
+              {/* Verdict Card */}
+              <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row gap-5 items-start sm:items-center shadow-sm
+                ${result.isManipulated ? 'bg-red-50 border-red-200' : 'bg-[#E8F5E9]/50 border-green-200'}`}>
+                <div className={`p-4 rounded-full flex-shrink-0 ${result.isManipulated ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
+                  {result.isManipulated ? <AlertTriangle className="w-8 h-8" /> : <ShieldCheck className="w-8 h-8" />}
                 </div>
-                <div className={`text-[15px] mt-1.5 leading-relaxed ${result.isManipulated ? 'text-red-900/80' : 'text-green-900/80'}`}>
-                  <strong className="block mb-1">{t.ocrVerdictAnalysis}:</strong>
-                  <div className="font-sans">
-                    <ReactMarkdown
-                      components={{
-                        ul: ({node, ...props}) => <ul className="list-disc pl-5 my-2 space-y-1.5" {...props} />,
-                        ol: ({node, ...props}) => <ol className="list-decimal pl-5 my-2 space-y-1.5" {...props} />,
-                        li: ({node, ...props}) => <li className="text-sm leading-relaxed" {...props} />,
-                        p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />
-                      }}
-                    >
-                      {result.analysis}
-                    </ReactMarkdown>
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <h3 className={`text-xl font-bold font-serif ${result.isManipulated ? 'text-red-700' : 'text-green-800'}`}>
+                    {result.isManipulated 
+                      ? t.ocrVerdictManipulated
+                      : t.ocrVerdictGenuine}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-black/5 text-black/70">
+                      {language === "en" ? "Fact Match Score" : "Persentase Kecocokan"}: {result.confidence}
+                    </span>
+                    {result.sourceMatch && result.sourceMatch !== "None" && (
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">
+                        {t.ocrVerdictSource}: {result.sourceMatch}
+                      </span>
+                    )}
+                  </div>
+                  <div className={`text-[15px] mt-1.5 leading-relaxed ${result.isManipulated ? 'text-red-900/80' : 'text-green-900/80'}`}>
+                    <strong className="block mb-1">{t.ocrVerdictAnalysis}:</strong>
+                    <div className="font-sans">
+                      <ReactMarkdown
+                        components={{
+                          ul: ({node, ...props}) => <ul className="list-disc pl-5 my-2 space-y-1.5" {...props} />,
+                          ol: ({node, ...props}) => <ol className="list-decimal pl-5 my-2 space-y-1.5" {...props} />,
+                          li: ({node, ...props}) => <li className="text-sm leading-relaxed" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />
+                        }}
+                      >
+                        {result.analysis}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Extracted Raw Text Card */}
-            <div className="bg-white border border-[#21302A]/10 rounded-2xl overflow-hidden shadow-xs">
-              <button 
-                onClick={() => setShowRawText(!showRawText)}
-                className="w-full px-5 py-4 flex items-center justify-between font-bold text-xs md:text-sm text-[#21302A] hover:bg-gray-50 border-b border-[#21302A]/5"
-              >
-                <span>{t.ocrExtractedText}</span>
-                <span className="text-[10px] text-[#5C6E60] font-medium">{showRawText ? (language === "en" ? 'Hide' : 'Sembunyikan') : (language === "en" ? 'Show' : 'Tampilkan')}</span>
-              </button>
-              {showRawText && (
-                <div className="p-5 bg-gray-50/50 max-h-[250px] overflow-y-auto font-mono text-[11px] md:text-xs text-[#5C6E60] whitespace-pre-wrap leading-relaxed">
-                  {result.text}
-                </div>
-              )}
-            </div>
-          </motion.div>
+              {/* Extracted Raw Text Card */}
+              <div className="bg-white border border-[#21302A]/10 rounded-2xl overflow-hidden shadow-xs">
+                <button 
+                  onClick={() => setShowRawText(!showRawText)}
+                  className="w-full px-5 py-4 flex items-center justify-between font-bold text-xs md:text-sm text-[#21302A] hover:bg-gray-50 border-b border-[#21302A]/5"
+                >
+                  <span>{t.ocrExtractedText}</span>
+                  <span className="text-[10px] text-[#5C6E60] font-medium">{showRawText ? (language === "en" ? 'Hide' : 'Sembunyikan') : (language === "en" ? 'Show' : 'Tampilkan')}</span>
+                </button>
+                {showRawText && (
+                  <div className="p-5 bg-gray-50/50 max-h-[250px] overflow-y-auto font-mono text-[11px] md:text-xs text-[#5C6E60] whitespace-pre-wrap leading-relaxed">
+                    {result.text}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )
         )}
       </div>
     </div>
