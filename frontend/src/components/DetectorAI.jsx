@@ -422,34 +422,54 @@ export function DetectorAI({ onOpenInfo, language }) {
 
         {/* Result Area for Visual Mode */}
         {mode === 'visual' && result && !isLoading && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`p-6 rounded-2xl border flex flex-col sm:flex-row gap-5 items-start sm:items-center shadow-sm
-              ${result.isAI ? 'bg-red-50 border-red-200' : 'bg-[#E8F5E9]/50 border-green-200'}`}
-          >
-            <div className={`p-4 rounded-full flex-shrink-0 ${result.isAI ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
-              {result.isAI ? <AlertTriangle className="w-8 h-8" /> : <ShieldCheck className="w-8 h-8" />}
-            </div>
-            <div className="flex-1 flex flex-col gap-1.5">
-              <h3 className={`text-xl font-bold font-serif ${result.isAI ? 'text-red-700' : 'text-green-800'}`}>
-                {result.isAI 
-                  ? (language === "en" ? 'Indicated AI (Digital Manipulation)' : 'Terindikasi AI (Rekayasa Digital)') 
-                  : (language === "en" ? 'Indicated Genuine / Safe' : 'Terindikasi Asli / Aman')}
-              </h3>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-black/5 text-black/70">
-                  {language === "en" ? "Confidence Level" : "Tingkat Keyakinan"}: {result.confidence}
-                </span>
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">
-                  {language === "en" ? "Method" : "Metode"}: {result.method || "Visual Analysis"}
-                </span>
+          result.success === false ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-6 rounded-2xl border border-orange-200 bg-orange-50/50 flex flex-col sm:flex-row gap-5 items-start sm:items-center shadow-sm w-full"
+            >
+              <div className="p-4 rounded-full flex-shrink-0 bg-orange-100 text-orange-700">
+                <AlertTriangle className="w-8 h-8" />
               </div>
-              <p className={`text-[15px] mt-1.5 leading-relaxed ${result.isAI ? 'text-red-900/80' : 'text-green-900/80'}`}>
-                <strong>{language === "en" ? "Analysis:" : "Analisis:"}</strong> {result.reason}
-              </p>
-            </div>
-          </motion.div>
+              <div className="flex-1 flex flex-col gap-1.5 font-sans">
+                <h3 className="text-xl font-bold text-orange-800">
+                  {language === "en" ? 'Analysis Failed' : 'Analisis Gambar Gagal'}
+                </h3>
+                <p className="text-[15px] mt-1.5 leading-relaxed text-orange-900/80">
+                  <strong>{language === "en" ? "Reason:" : "Penyebab:"}</strong> {result.reason}
+                </p>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`p-6 rounded-2xl border flex flex-col sm:flex-row gap-5 items-start sm:items-center shadow-sm
+                ${result.isAI ? 'bg-red-50 border-red-200' : 'bg-[#E8F5E9]/50 border-green-200'}`}
+            >
+              <div className={`p-4 rounded-full flex-shrink-0 ${result.isAI ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
+                {result.isAI ? <AlertTriangle className="w-8 h-8" /> : <ShieldCheck className="w-8 h-8" />}
+              </div>
+              <div className="flex-1 flex flex-col gap-1.5">
+                <h3 className={`text-xl font-bold font-serif ${result.isAI ? 'text-red-700' : 'text-green-800'}`}>
+                  {result.isAI 
+                    ? (language === "en" ? 'Indicated AI (Digital Manipulation)' : 'Terindikasi AI (Rekayasa Digital)') 
+                    : (language === "en" ? 'Indicated Genuine / Safe' : 'Terindikasi Asli / Aman')}
+                </h3>
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-black/5 text-black/70">
+                    {language === "en" ? "Confidence Level" : "Tingkat Keyakinan"}: {result.confidence}
+                  </span>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">
+                    {language === "en" ? "Method" : "Metode"}: {result.method || "Visual Analysis"}
+                  </span>
+                </div>
+                <p className={`text-[15px] mt-1.5 leading-relaxed ${result.isAI ? 'text-red-900/80' : 'text-green-900/80'}`}>
+                  <strong>{language === "en" ? "Analysis:" : "Analisis:"}</strong> {result.reason}
+                </p>
+              </div>
+            </motion.div>
+          )
         )}
 
         {/* Result Area for OCR Mode */}
