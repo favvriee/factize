@@ -176,4 +176,6 @@ async def refresh_trending(x_gemini_api_key: Optional[str] = Header(None)):
         updated_data = await refresh_trending_hoaxes(x_gemini_api_key)
         return {"status": "success", "data": updated_data}
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

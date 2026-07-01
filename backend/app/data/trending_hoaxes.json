@@ -1,26 +1,26 @@
 [
   {
     "id": 1,
-    "title": "Tautan Pendaftaran Bansos Kemensos Google Form Rp 600rb",
+    "title": "Waspada! Penipuan Bantuan Dana BPJS Rp125 Juta",
     "category": "Penipuan / Scams",
     "severity": "high",
-    "description": "Beredar link formulir Google/situs palsu di WhatsApp untuk mengklaim bantuan sosial tunai dari Kemensos dengan meminta foto KTP dan KK.",
-    "query": "Verifikasi pesan pendaftaran bansos tunai Kemensos Rp 600.000 lewat tautan Google Form WhatsApp yang meminta data KTP."
+    "description": "Beredar SMS/chat WA menawarkan bantuan dana fantastis dari BPJS Kesehatan. Ini hoaks! BPJS tidak pernah memberikan bantuan dana semacam itu.",
+    "query": "Apakah benar BPJS Kesehatan memberikan bantuan dana sebesar Rp125 juta melalui SMS atau chat WhatsApp?"
   },
   {
     "id": 2,
-    "title": "Subsidi BPJS Kesehatan Gratis Tanpa Iuran 2026",
-    "category": "Finansial / Layanan Publik",
-    "severity": "medium",
-    "description": "Pesan berantai mengklaim pemerintah memberikan subsidi BPJS gratis untuk warga berpenghasilan rendah dengan mendaftar di situs non-resmi.",
-    "query": "Cek kebenaran situs pendaftaran subsidi BPJS gratis yang meminta nomor rekening bank untuk pencairan dana bantuan."
+    "title": "Hoaks Penggalangan Dana Bencana Alam Mengatasnamakan Kemensetneg",
+    "category": "Penipuan / Scams",
+    "severity": "high",
+    "description": "Pamflet penggalangan dana untuk korban bencana alam yang menggunakan logo dan nama Kemensetneg RI adalah hoaks. Waspada penipuan!",
+    "query": "Apakah Kementerian Sekretariat Negara (Kemensetneg) RI mengadakan penggalangan dana untuk korban bencana alam melalui pamflet di media sosial?"
   },
   {
     "id": 3,
-    "title": "Air Kelapa & Garam Sembuhkan Demam Berdarah Instan dalam 3 Jam",
+    "title": "Mantan Menkes Nafsiah Mboi Promosikan Produk Kesehatan? Hoaks!",
     "category": "Kesehatan / Health",
-    "severity": "low",
-    "description": "Postingan viral di Facebook menyatakan meminum campuran air kelapa muda dan garam dapur dapat melumpuhkan virus demam berdarah secara instan.",
-    "query": "Apakah benar minum air kelapa dicampur garam dapat menyembuhkan Demam Berdarah (DBD) secara instan dalam 3 jam?"
+    "severity": "medium",
+    "description": "Video di media sosial menunjukkan mantan Menteri Kesehatan Nafsiah Mboi mempromosikan produk kesehatan. Ini adalah hoaks dan penyalahgunaan identitas.",
+    "query": "Apakah mantan Menteri Kesehatan Nafsiah Mboi benar-benar mempromosikan produk kesehatan di media sosial?"
   }
 ]
