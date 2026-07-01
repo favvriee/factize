@@ -1,26 +1,26 @@
 [
   {
     "id": 1,
-    "title": "Waspada! Penipuan Bantuan Dana BPJS Rp125 Juta",
+    "title": "Waspada! Penipuan Dana Bantuan Mengatasnamakan Kemensetneg RI",
     "category": "Penipuan / Scams",
     "severity": "high",
-    "description": "Beredar SMS/chat WA menawarkan bantuan dana fantastis dari BPJS Kesehatan. Ini hoaks! BPJS tidak pernah memberikan bantuan dana semacam itu.",
-    "query": "Apakah benar BPJS Kesehatan memberikan bantuan dana sebesar Rp125 juta melalui SMS atau chat WhatsApp?"
+    "description": "Beredar pamflet penggalangan dana korban bencana alam yang mencatut logo dan nama Kementerian Sekretariat Negara RI. Ini hoaks!",
+    "query": "Verifikasi: Apakah benar Kementerian Sekretariat Negara RI mengadakan penggalangan dana untuk korban bencana alam melalui pamflet di media sosial?"
   },
   {
     "id": 2,
-    "title": "Hoaks Penggalangan Dana Bencana Alam Mengatasnamakan Kemensetneg",
+    "title": "Hoaks Bantuan Dana BPJS Rp125 Juta Lewat SMS/WA",
     "category": "Penipuan / Scams",
     "severity": "high",
-    "description": "Pamflet penggalangan dana untuk korban bencana alam yang menggunakan logo dan nama Kemensetneg RI adalah hoaks. Waspada penipuan!",
-    "query": "Apakah Kementerian Sekretariat Negara (Kemensetneg) RI mengadakan penggalangan dana untuk korban bencana alam melalui pamflet di media sosial?"
+    "description": "BPJS Kesehatan tidak pernah memberikan bantuan dana senilai Rp125 juta seperti yang beredar di SMS atau chat WhatsApp. Hati-hati penipuan!",
+    "query": "Verifikasi: Apakah BPJS Kesehatan memberikan bantuan dana senilai Rp125 juta melalui SMS atau chat WhatsApp?"
   },
   {
     "id": 3,
     "title": "Mantan Menkes Nafsiah Mboi Promosikan Produk Kesehatan? Hoaks!",
     "category": "Kesehatan / Health",
     "severity": "medium",
-    "description": "Video di media sosial menunjukkan mantan Menteri Kesehatan Nafsiah Mboi mempromosikan produk kesehatan. Ini adalah hoaks dan penyalahgunaan identitas.",
-    "query": "Apakah mantan Menteri Kesehatan Nafsiah Mboi benar-benar mempromosikan produk kesehatan di media sosial?"
+    "description": "Beredar video mantan Menteri Kesehatan Nafsiah Mboi mempromosikan produk kesehatan di media sosial. Informasi ini tidak benar.",
+    "query": "Verifikasi: Apakah benar mantan Menteri Kesehatan Nafsiah Mboi mempromosikan produk kesehatan di media sosial?"
   }
 ]

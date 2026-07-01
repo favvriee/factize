@@ -1,5 +1,13 @@
-// Konfigurasi endpoint backend FastAPI
-const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+// Konfigurasi endpoint backend FastAPI secara dinamis berdasarkan hostname browser
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  const hostname = window.location.hostname;
+  return `http://${hostname}:8000`;
+};
+
+const API_BASE = getApiBase();
 const API_URL = `${API_BASE}/api`;
 
 export const verifyGeminiKey = async (key) => {
