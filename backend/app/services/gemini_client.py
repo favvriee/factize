@@ -57,7 +57,7 @@ async def generate_content_stream_with_failover(contents, config=None, model='ge
     last_err = None
     for idx, key in enumerate(keys):
         try:
-            client = genai.Client(api_key=key)
+            client = genai.Client(api_key=key, http_options=types.HttpOptions(timeout=60_000))
             stream = await client.aio.models.generate_content_stream(
                 model=model,
                 contents=contents,
@@ -99,7 +99,7 @@ def generate_content_sync_with_failover(contents, config=None, model='gemini-2.5
     last_err = None
     for idx, key in enumerate(keys):
         try:
-            client = genai.Client(api_key=key)
+            client = genai.Client(api_key=key, http_options=types.HttpOptions(timeout=60_000))
             response = client.models.generate_content(
                 model=model,
                 contents=contents,

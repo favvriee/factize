@@ -489,6 +489,8 @@ async def analyze_chat_stream(messages, model_name='gemini-2.5-flash', custom_ap
         # Cek jika error disebabkan oleh antrean server (503)
         if "503" in error_msg or "UNAVAILABLE" in error_msg:
             pesan_user = "Maaf, server Factize sedang sangat sibuk karena permintaan yang tinggi. Mohon tunggu beberapa saat dan klik tombol **Regenerate** untuk mencoba lagi."
+        elif "ReadError" in error_msg or "ConnectError" in error_msg or "ReadTimeout" in error_msg or "httpcore" in error_msg.lower() or "httpx" in error_msg.lower():
+            pesan_user = "Terjadi gangguan koneksi jaringan sementara saat menerima data dari server AI (ReadError). Silakan klik tombol **Regenerate** untuk mencoba lagi."
         else:
             pesan_user = f"Maaf, terjadi kesalahan saat menghubungi layanan AI: {error_msg}"
             
